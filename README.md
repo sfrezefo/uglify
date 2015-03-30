@@ -1,6 +1,7 @@
 # uglify
-transform multifiles JSON struct into single line JSON
-This program transform a multiline JSON like :
+transform multi-lines JSON struct into single line JSON
+
+This program transforms a multi-lines JSON file like :
 
 {
   "a":"1",
