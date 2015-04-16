@@ -16,7 +16,7 @@ var (
 	jsonarray  = flag.Bool("jsonarray", false, "suround file with array bracket")
 )
 
-func parsej(f interface{}) {
+func parsej(outfile io.Writer, f interface{}) {
 	switch vv := f.(type) {
 	case string:
 		fmt.Print("\"", vv, "\"")
@@ -28,7 +28,7 @@ func parsej(f interface{}) {
 			if i != 0 {
 				fmt.Print(",")
 			}
-			parsej(u)
+			parsej(outfile, u)
 		}
 		fmt.Print("]")
 	case map[string]interface{}:
@@ -39,16 +39,16 @@ func parsej(f interface{}) {
 				fmt.Print(",")
 			}
 			fmt.Print("\"", k, "\":")
-			parsej(v)
+			parsej(outfile, v)
 			l++
 		}
 		fmt.Print("}")
 	case interface{}:
-		fmt.Println(vv)
-		fmt.Println("is an interface:")
+		fmt.Fprintln(outfile, vv)
+		fmt.Fprintln(outfile, "is an interface:")
 	default:
-		fmt.Println(vv)
-		fmt.Println("is of a type I don't know how to handle")
+		fmt.Fprintln(outfile, vv)
+		fmt.Fprintln(outfile, "is of a type I don't know how to handle")
 	}
 }
 
@@ -63,22 +63,38 @@ func openStdinOrFile(filename string) io.Reader {
 	}
 	return r
 }
+
+func openStdoutOrFile(filename string) io.Writer {
+	var err error
+	w := os.Stdout
+	if filename != "" {
+		w, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			panic(err)
+		}
+	}
+	return w
+}
+
 func main() {
 	var g interface{}
 
 	flag.Parse()
 	infile := openStdinOrFile(*inputfile)
+	outfile := openStdoutOrFile(*outputfile)
 
-	fmt.Println("inputfile: ", *inputfile)
-	fmt.Println("outputfile: ", *outputfile)
-	fmt.Println("jsonarray: ", *jsonarray)
+	fmt.Fprintln(outfile, outfile, "xxxxxxxxxx")
+
+	fmt.Fprintln(outfile, "inputfile: ", *inputfile)
+	fmt.Fprintln(outfile, "outputfile: ", *outputfile)
+	fmt.Fprintln(outfile, "jsonarray: ", *jsonarray)
 	//	if *inputfile == "" {
 	//		in = os.Stdin
 	//	}
 	//	file, err := ioutil.Open
 	//	File("test1.json")
-	if *outputfile == "" {
-	}
+	//if *outputfile == "" {
+	//}
 
 	//	file, err := ioutil.ReadFile("test1.json")
 	file, err := ioutil.ReadAll(infile)
@@ -87,22 +103,22 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(s)
+	fmt.Fprintln(outfile, s)
 	err1 := json.Unmarshal(file, &g)
 
 	if err1 != nil {
 		log.Fatal(err1)
 	}
 
-	fmt.Println("unmarshalled : ", g)
-	fmt.Println(" ")
+	fmt.Fprintln(outfile, "unmarshalled : ", g)
+	fmt.Fprintln(outfile, " ")
 	if *jsonarray == true {
 		fmt.Print("[")
 	}
-	parsej(g)
+	parsej(outfile, g)
 	if *jsonarray == true {
 		fmt.Print("]")
 	}
-	fmt.Println(" ")
+	fmt.Fprintln(outfile, " ")
 
 }
