@@ -1,10 +1,14 @@
 NAME
+----
     uglify  
     
 SYNOPSIS
+--------
     uglify -inputfile='test1.json' -outputfile='out.json' -jsonarray
 
 DESCRIPTION
+-----------
+
     uglify transforms multi-lines JSON struct into single line JSON
     A multi-lines JSON file like :
         {
@@ -22,11 +26,13 @@ DESCRIPTION
 
     The options are as follows:
                
-    -inputfile 
-    -outputfile
-    -jsonarray
+    **-inputfile** 
+    **-outputfile**
+    **-jsonarray**
+
                         
 USAGE
+-----
     uglify -inputfile='test1.json' -outputfile='out.json' -jsonarray
     cat test1.json | ./uglify  -outputfile='out.json' -jsonarray
     cat test1.json | ./uglify   -jsonarray
