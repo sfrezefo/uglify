@@ -32,7 +32,7 @@ DESCRIPTION
     **-jsonarray** specify if the output json should be surrounded by an array element
     **-prettyprint** with the -prettyprint option it can also pretty print 
     **-debuglevel**
-**serge**
+
 
 USAGE
 -----
